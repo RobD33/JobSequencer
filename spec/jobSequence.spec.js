@@ -16,30 +16,36 @@ describe('jobSequence()', () => {
     });
 
     it('Returns a sequence of all the jobs given when there are no dependencies', () => {
-      const actual = jobSequence(`a =>
-      b =>
-      c =>`);
-      const expected = 'abc';
-      expect(actual).to.equal(expected);
+        const actual = jobSequence(`a =>
+        b =>
+        c =>`);
+        expect(sequence.split('')).to.have.members(['a', 'b', 'c'])
+        expect(sequence.length).to.equal(3)
     });
 
     it('Returns a sequence of jobs with c positioned before b when given b => c', () => {
-        const actual = jobSequence(`a =>
+        const sequence = jobSequence(`a =>
         b => c
         c =>`);
-        const expected = 'acb';
-        expect(actual).to.equal(expected);
+        
+        expect(sequence.indexOf('c')).to.be.below(sequence.indexOf('b'));
+        expect(sequence.split('')).to.have.members(['a', 'b', 'c'])
+        expect(sequence.length).to.equal(3)
     });
     
     it('Returns a sequence of jobs with multiple dependencies in the correct order', () => {
-        const actual = jobSequence(`a =>
+        const sequence = jobSequence(`a =>
         b => c
         c => f
         d => a
         e => b
         f =>`);
-        const expected = 'afcdbe';
-        expect(actual).to.equal(expected);
+        expect(sequence.indexOf('f')).to.be.below(sequence.indexOf('c'));
+        expect(sequence.indexOf('c')).to.be.below(sequence.indexOf('b'));
+        expect(sequence.indexOf('b')).to.be.below(sequence.indexOf('e'));
+        expect(sequence.indexOf('a')).to.be.below(sequence.indexOf('d'));
+        expect(sequence.split('')).to.have.members(['a', 'b', 'c', 'd', 'e', 'f'])
+        expect(sequence.length).to.equal(6)
     });
 
     it('Returns an error stating jobs cannot depend on themselves when applicable', () => {
