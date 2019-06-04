@@ -41,4 +41,23 @@ describe('jobSequence()', () => {
         const expected = 'afcdbe';
         expect(actual).to.equal(expected);
     });
+
+    it('Returns an error stating jobs cannot depend on themselves when applicable', () => {
+        const actual = jobSequence(`a =>
+        b =>
+        c => c`);
+        const expected = 'Error: jobs cannot depend on themselves';
+        expect(actual).to.equal(expected);
+    });
+    
+    it('Returns an error stating that jobs cannot have circular dependencies when applicable', () => {
+        const actual = jobSequence(`a =>
+        b => c
+        c => f
+        d => a
+        e =>
+        f => b`);
+        const expected = 'Error, jobs cannot have circular dependencies';
+        expect(actual).to.equal(expected);
+    });
 });
