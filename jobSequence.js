@@ -2,14 +2,15 @@ function jobSequence (jobStructure) {
     if (jobStructure == '') return '';
     let sequence = '', error = null;
     let formattedJobStructure =  formatJobStructure(jobStructure);
-    formattedJobStructure.forEach(job => {
-        if (job[1] == '') sequence = sequence + job[0];
-        if (job[0] == job[1]) error = 'jobs cannot depend on themselves';
-    });
     while (sequence.length < formattedJobStructure.length && !error) {
         let jobsLeft = '', dependenciesLeft = '';
         formattedJobStructure.forEach(jobWithDependency => {
             let job = jobWithDependency[0], dependency = jobWithDependency[1];
+            if (job == dependency) {
+                error = 'jobs cannot depend on themselves';
+                return;
+            }
+            if (dependency == '' && !sequence.includes(job)) sequence = sequence + job;
             if (sequence.includes(dependency) && !sequence.includes(job)) {
                 sequence = sequence + job
             };
@@ -20,6 +21,7 @@ function jobSequence (jobStructure) {
             if(jobsLeft.length > 0){
                 if (jobsLeft.split('').every(jobLeft => dependenciesLeft.includes(jobLeft))) {
                     error = 'jobs cannot have circular dependencies';
+                    return
                 }
             };
         })
