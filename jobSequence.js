@@ -1,39 +1,39 @@
 function jobSequence (jobStructure) {
-    let sequence = '', circular = false;
     if (jobStructure == '') return '';
-    let jobStructureArray =  formatJobStructure(jobStructure);
-    let structureLength = jobStructureArray.length;
-    jobStructureArray.forEach(job => {
-        if (job[1] == '') sequence = sequence + job[0]
-        if (job[0] == job[1]) circular = true;
+    let sequence = '', error = null;
+    let formattedJobStructure =  formatJobStructure(jobStructure);
+    let structureLength = formattedJobStructure.length;
+    formattedJobStructure.forEach(job => {
+        if (job[1] == '') sequence = sequence + job[0];
+        if (job[0] == job[1]) error = 'jobs cannot depend on themselves';
     });
-    if (circular) return 'Error: jobs cannot depend on themselves'
-    while (sequence.length < structureLength && circular == false) {
+    while (sequence.length < structureLength && !error) {
         let jobsLeft = '', dependenciesLeft = '';
-        jobStructureArray.forEach(jobWithDependency => {
-            if (sequence.includes(jobWithDependency[1]) && !sequence.includes(jobWithDependency[0])) {
-                sequence = sequence + jobWithDependency[0]
-            }
-            if (!sequence.includes(jobWithDependency[0]) && jobWithDependency[1] !== '') {
-                jobsLeft = jobsLeft + jobWithDependency[0]
-                dependenciesLeft = dependenciesLeft + jobWithDependency[1]
-            }
+        formattedJobStructure.forEach(jobWithDependency => {
+            let job = jobWithDependency[0], dependency = jobWithDependency[1];
+            if (sequence.includes(dependency) && !sequence.includes(job)) {
+                sequence = sequence + job
+            };
+            if (!sequence.includes(job) && dependency !== '') {
+                jobsLeft = jobsLeft + job
+                dependenciesLeft = dependenciesLeft + dependency
+            };
             if(jobsLeft.length > 0){
-                if (jobsLeft.split('').every(job => dependenciesLeft.includes(job))) {
-                    circular = true
+                if (jobsLeft.split('').every(jobLeft => dependenciesLeft.includes(jobLeft))) {
+                    error = 'jobs cannot have circular dependencies';
                 }
-            }
+            };
         })
     }
-    if (circular) return 'Error, jobs cannot have circular dependencies'
+    if (error) return `Error: ${error}`
     return sequence;
 };
 
 function formatJobStructure (jobStructure) {
-    let newStructure = jobStructure.split('\n').map(job => {
-        return job.split('=>').map(item => item.trim())
+    let formattedJobStructure = jobStructure.split('\n').map(job => {
+        return job.split('=>').map(item => item.trim());
     })
-    return newStructure
+    return formattedJobStructure;
 }
 
 module.exports = {jobSequence}

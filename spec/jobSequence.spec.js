@@ -57,7 +57,7 @@ describe('jobSequence()', () => {
         d => a
         e =>
         f => b`);
-        const expected = 'Error, jobs cannot have circular dependencies';
+        const expected = 'Error: jobs cannot have circular dependencies';
         expect(actual).to.equal(expected);
     });
 });
