@@ -2,12 +2,11 @@ function jobSequence (jobStructure) {
     if (jobStructure == '') return '';
     let sequence = '', error = null;
     let formattedJobStructure =  formatJobStructure(jobStructure);
-    let structureLength = formattedJobStructure.length;
     formattedJobStructure.forEach(job => {
         if (job[1] == '') sequence = sequence + job[0];
         if (job[0] == job[1]) error = 'jobs cannot depend on themselves';
     });
-    while (sequence.length < structureLength && !error) {
+    while (sequence.length < formattedJobStructure.length && !error) {
         let jobsLeft = '', dependenciesLeft = '';
         formattedJobStructure.forEach(jobWithDependency => {
             let job = jobWithDependency[0], dependency = jobWithDependency[1];

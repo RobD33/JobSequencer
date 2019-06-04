@@ -16,7 +16,7 @@ describe('jobSequence()', () => {
     });
 
     it('Returns a sequence of all the jobs given when there are no dependencies', () => {
-        const actual = jobSequence(`a =>
+        const sequence = jobSequence(`a =>
         b =>
         c =>`);
         expect(sequence.split('')).to.have.members(['a', 'b', 'c'])
