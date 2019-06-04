@@ -22,4 +22,23 @@ describe('jobSequence()', () => {
       const expected = 'abc';
       expect(actual).to.equal(expected);
     });
+
+    it('Returns a sequence of jobs with c positioned before b when given b => c', () => {
+        const actual = jobSequence(`a =>
+        b => c
+        c =>`);
+        const expected = 'acb';
+        expect(actual).to.equal(expected);
+    });
+    
+    it('Returns a sequence of jobs with multiple dependencies in the correct order', () => {
+        const actual = jobSequence(`a =>
+        b => c
+        c => f
+        d => a
+        e => b
+        f =>`);
+        const expected = 'afcdbe';
+        expect(actual).to.equal(expected);
+    });
 });

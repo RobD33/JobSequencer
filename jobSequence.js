@@ -3,8 +3,15 @@ function jobSequence (jobStructure) {
     if (jobStructure == '') return '';
     let jobStructureArray =  formatJobStructure(jobStructure);
     jobStructureArray.forEach(job => {
-        sequence = sequence + job[0]
+        if (job[1] == '') sequence = sequence + job[0]
     });
+    while (sequence.length < jobStructureArray.length) {
+        jobStructureArray.forEach(jobWithDependency => {
+            if (sequence.includes(jobWithDependency[1]) && !sequence.includes(jobWithDependency[0])) {
+                sequence = sequence + jobWithDependency[0]
+            }
+        })
+    }
     return sequence;
 };
 
