@@ -9,22 +9,20 @@ function jobSequence (jobStructure) {
             if (job == dependency) {
                 error = 'jobs cannot depend on themselves';
                 return;
-            }
-            if (dependency == '' && !sequence.includes(job)) sequence = sequence + job;
-            if (sequence.includes(dependency) && !sequence.includes(job)) {
-                sequence = sequence + job
             };
-            if (!sequence.includes(job) && dependency !== '') {
-                jobsLeft = jobsLeft + job
-                dependenciesLeft = dependenciesLeft + dependency
+            if ((dependency == '' || sequence.includes(dependency)) && !sequence.includes(job)) {
+                sequence = sequence + job;
             };
-            if(jobsLeft.length > 0){
-                if (jobsLeft.split('').every(jobLeft => dependenciesLeft.includes(jobLeft))) {
-                    error = 'jobs cannot have circular dependencies';
-                    return
-                }
+            if (!sequence.includes(job)) {
+                jobsLeft = jobsLeft + job;
+                dependenciesLeft = dependenciesLeft + dependency;
             };
         })
+        if(jobsLeft.length){
+            if (jobsLeft.split('').every(jobLeft => dependenciesLeft.includes(jobLeft))) {
+                error = 'jobs cannot have circular dependencies';
+            };
+        };
     }
     if (error) return `Error: ${error}`
     return sequence;
