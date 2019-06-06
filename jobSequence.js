@@ -4,8 +4,7 @@ function jobSequence (jobStructure) {
     let formattedJobStructure =  formatJobStructure(jobStructure);
     while (sequence.length < formattedJobStructure.length && !error) {
         let jobsLeft = '', dependenciesLeft = '';
-        formattedJobStructure.forEach(jobWithDependency => {
-            let job = jobWithDependency[0], dependency = jobWithDependency[1];
+        formattedJobStructure.forEach(([job, dependency]) => {
             if (job == dependency) {
                 error = 'jobs cannot depend on themselves';
                 return;
